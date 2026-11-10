@@ -1,0 +1,39 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# ---------- 虚拟环境（本地重建，不入库） ----------
+.venv/
+/venv/
+/env/
+
+# ---------- 测试缓存 ----------
+.pytest_cache/
+.cache/
+.coverage
+htmlcov/
+
+# ---------- 测试运行产物（报告 / 日志 / 截图） ----------
+reports/*
+!reports/.gitkeep
+logs/*
+!logs/.gitkeep
+allure-results/
+allure-report/
+allure-html/
+screenshots/
+.trae-html-share-packages/
+
+# ---------- IDE ----------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---------- 系统 ----------
+.DS_Store
+Thumbs.db

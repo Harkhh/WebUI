@@ -1,0 +1,17 @@
+# 【故意失败示例】用于演示：失败自动截图 + Allure 失败详情 + 过程监测记录
+# 如无需演示可删除本文件，或运行时用 --level smoke / -k 过滤掉
+suite: 截图能力演示
+module: 故意失败示例
+cases:
+  - id: fail_demo_001
+    title: 故意失败的用例（验证失败截图能力）
+    level: regression
+    priority: P3
+    steps:
+      - action: goto
+        value: /index.html
+      - action: assert_text
+        locator: "h1"
+        expect: 故意写错的标题
+      - action: screenshot
+        value: 不应执行到这里

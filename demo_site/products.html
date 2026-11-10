@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>演示商城 - 商品列表</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", sans-serif; background: #f0f2f5; margin: 0; }
+  header { background: #001529; color: #fff; padding: 0 32px; height: 56px;
+           display: flex; align-items: center; justify-content: space-between; }
+  header .title { font-size: 17px; font-weight: 600; }
+  #cart-count { background: #fa541c; border-radius: 10px; padding: 1px 9px; font-size: 13px; margin-left: 6px; }
+  main { max-width: 860px; margin: 32px auto; padding: 0 16px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .product-item { background: #fff; border-radius: 10px; padding: 20px; text-align: center; }
+  .product-item .name { font-size: 15px; margin: 8px 0 4px; }
+  .product-item .price { color: #cf1322; font-weight: 700; }
+  .add-btn { margin-top: 12px; padding: 6px 18px; background: #1677ff; color: #fff;
+             border: 0; border-radius: 6px; cursor: pointer; }
+  .logout { color: #fff; text-decoration: none; font-size: 13px; }
+</style>
+</head>
+<body>
+  <header>
+    <span class="brand">演示商城</span>
+    <span>购物车<span id="cart-count">0</span><a class="logout" href="index.html" style="margin-left:16px">退出</a></span>
+  </header>
+  <main>
+    <h2 class="title">商品列表</h2>
+    <div class="grid" id="grid"></div>
+  </main>
+<script>
+  const PRODUCTS = [
+    { id: 1, name: "无线机械键盘", price: 329 },
+    { id: 2, name: "无线鼠标", price: 129 },
+    { id: 3, name: "27寸4K显示器", price: 2199 }
+  ];
+  const grid = document.getElementById("grid");
+  grid.innerHTML = PRODUCTS.map(p => `
+    <div class="product-item" data-id="${p.id}">
+      <div class="name">${p.name}</div>
+      <div class="price">￥${p.price}</div>
+      <button class="add-btn" data-id="${p.id}">加入购物车</button>
+    </div>`).join("");
+
+  const badge = document.getElementById("cart-count");
+  const render = () => badge.textContent = localStorage.getItem("cart_count") || "0";
+  render();
+
+  grid.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("add-btn")) return;
+    const next = (parseInt(localStorage.getItem("cart_count") || "0", 10) + 1).toString();
+    localStorage.setItem("cart_count", next);
+    render();
+  });
+</script>
+</body>
+</html>

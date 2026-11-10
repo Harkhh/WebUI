@@ -1,0 +1,37 @@
+# 登录模块：参数化（数据驱动）负向用例 —— 一个用例脚本跑多组数据
+suite: 登录模块
+module: 登录
+cases:
+  - id: login_neg
+    title: 登录失败提示校验（参数化）
+    level: regression
+    priority: P1
+    parametrize:
+      - desc: 密码错误
+        username: standard
+        password: wrong_password
+        expect_msg: ${business.users.demo_shop.msg_invalid}
+      - desc: 用户名不存在
+        username: nobody
+        password: "123456"
+        expect_msg: ${business.users.demo_shop.msg_invalid}
+      - desc: 锁定用户
+        username: locked
+        password: "123456"
+        expect_msg: ${business.users.demo_shop.msg_locked}
+    steps:
+      - action: goto
+        value: /index.html
+      - action: fill
+        locator: "#username"
+        value: ${username}
+      - action: fill
+        locator: "#password"
+        value: ${password}
+      - action: click
+        locator: "#login-btn"
+      - action: assert_text
+        locator: "#error"
+        expect: ${expect_msg}
+      - action: screenshot
+        value: 登录失败_${desc}

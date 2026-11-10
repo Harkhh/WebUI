@@ -1,0 +1,137 @@
+# 语法全集参考示例（本文件以 _ 开头，仅作模板参考，不会被自动执行）
+# 复制到 data/cases/ 下并去掉文件名前的 _ 即可生效
+suite: 示例套件
+module: 示例模块
+
+cases:
+  # ========== 1. 基础用例：打开页面 → 输入 → 点击 → 断言 ==========
+  - id: example_001
+    title: 基础登录冒烟
+    level: smoke            # smoke 冒烟 / regression 回归
+    priority: P0            # P0~P3，映射 Allure 严重级别
+    data:                   # 用例数据：可直接引用业务数据（整个 dict）
+      user: ${business.users.demo_shop.standard_user}
+    steps:
+      - action: goto
+        value: /index.html            # 相对路径自动拼接 ${env.base_url}
+      - action: fill
+        locator: "#username"          # 默认 CSS 定位
+        value: ${user.username}       # 取 data 里 user 的字段
+      - action: fill
+        locator: id=password          # id= 前缀等价 #password
+        value: ${user.password}
+      - action: click
+        locator: "#login-btn"
+      - action: assert_url
+        expect: products.html
+      - action: assert_text
+        locator: css=.title
+        expect: 商品列表
+      - action: screenshot
+        value: 登录成功
+
+  # ========== 2. 参数化用例：一组数据展开为一条独立用例 ==========
+  - id: example_002
+    title: 登录失败提示（参数化）
+    level: regression
+    priority: P1
+    parametrize:            # 每行展开为 example_002_p1 / p2 / p3 ...
+      - desc: 密码错误      # desc 仅为备注，可在后续步骤中引用
+        username: standard
+        password: wrong_password
+        expect_msg: ${business.users.demo_shop.msg_invalid}   # 参数值可再引用业务数据（嵌套变量）
+      - desc: 用户不存在
+        username: nobody
+        password: "123456"
+        expect_msg: ${business.users.demo_shop.msg_invalid}
+      - desc: 锁定用户
+        username: locked
+        password: "123456"
+        expect_msg: ${business.users.demo_shop.msg_locked}
+    steps:
+      - action: goto
+        value: /index.html
+      - action: fill
+        locator: "#username"
+        value: ${username}
+      - action: fill
+        locator: "#password"
+        value: ${password}
+      - action: click
+        locator: "#login-btn"
+      - action: assert_text
+        locator: "#error"
+        expect: ${expect_msg}
+      - action: screenshot
+        value: 登录失败_${desc}
+
+  # ========== 3. 变量语法全集 ==========
+  - id: example_003
+    title: 变量用法演示
+    level: regression
+    priority: P2
+    data:
+      local_var: 本地变量值
+      user: ${business.users.demo_shop.standard_user}   # 引用整个 dict 保留类型
+    steps:
+      - action: goto
+        value: ${env.base_url}/index.html   # 环境变量：config/env/<env>.yaml
+      - action: fill
+        locator: "#username"
+        value: ${business.users.demo_shop.standard_user.username}   # 业务数据点路径
+      - action: fill
+        locator: "#password"
+        value: ${user.password}             # 先取 data，再取 runtime
+      - action: screenshot
+        value: 截图_${timestamp}            # 内置变量：timestamp/today/now
+      - action: click
+        locator: "#login-btn"
+      - action: save_text                   # 保存运行期变量，后续步骤用 ${cart_num} 引用
+        locator: "#cart-count"
+        value: cart_num
+      - action: assert_text
+        locator: "#cart-count"
+        expect: ${cart_num}
+
+  # ========== 4. 常用动作与断言 ==========
+  - id: example_004
+    title: 动作与断言全集演示
+    level: regression
+    priority: P3
+    steps:
+      - action: goto
+        value: /index.html
+      # ---- 交互 ----
+      - action: hover
+        locator: "#username"
+      - action: fill
+        locator: "#username"            # text= 按可见文本定位示例：locator: text=登 录
+        value: 演示输入
+      - action: clear
+        locator: "#username"
+      - action: press
+        locator: "#password"
+        key: Tab
+      - action: dblclick
+        locator: "#login-btn"
+      - action: wait_for                    # 显式等待元素状态（优于 wait）
+        locator: "#error"
+        state: hidden                       # visible/hidden/attached/detached
+      - action: wait
+        value: 0.5                          # 强制等待（秒），尽量不用
+      # ---- 断言 ----
+      - action: assert_visible
+        locator: "#login-btn"
+      - action: assert_hidden
+        locator: ".not-exist"
+      - action: assert_contains
+        locator: h1
+        expect: 演示商城                    # 文本包含
+      - action: assert_contains
+        locator: url                        # locator 传 url 断言地址
+        expect: index.html
+      - action: assert_title
+        expect: 演示商城 - 登录
+      - action: assert_count
+        locator: input
+        expect: 2

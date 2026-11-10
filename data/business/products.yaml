@@ -1,0 +1,8 @@
+# 业务数据：商品信息
+demo_shop:
+  product_count: 3
+  first_product:
+    name: 无线机械键盘
+    price: "￥329"
+  cart_empty: 0
+  cart_one: 1

@@ -1,0 +1,54 @@
+# 百度搜索真实网页验证用例（外网）
+# 注：百度新版首页可见搜索框为 #chat-textarea（#kw 为隐藏元素）；
+#     百度对自动化有反爬验证，已配合 config 的 user_agent/stealth 配置降低误判
+suite: 百度搜索
+module: 百度搜索
+cases:
+  - id: baidu_001
+    title: 百度搜索Playwright冒烟
+    level: smoke
+    priority: P0
+    steps:
+      - action: goto
+        value: https://www.baidu.com        # http/https 全地址直接使用，不拼接 base_url
+      - action: assert_title
+        expect: 百度一下，你就知道
+      - action: fill
+        locator: "#chat-textarea"
+        value: Playwright
+      - action: press                        # Enter 提交搜索（避免按钮多匹配）
+        locator: "#chat-textarea"
+        key: Enter
+      - action: wait_for
+        locator: "#content_left"             # 等待搜索结果容器
+      - action: assert_visible
+        locator: "#content_left"
+      - action: assert_contains
+        locator: url
+        expect: wd=Playwright
+      - action: screenshot
+        value: 百度搜索结果_Playwright
+
+  - id: baidu_kw
+    title: 百度搜索多关键词（参数化）
+    level: regression
+    priority: P1
+    parametrize:
+      - keyword: pytest
+      - keyword: Allure
+    steps:
+      - action: goto
+        value: https://www.baidu.com
+      - action: fill
+        locator: "#chat-textarea"
+        value: ${keyword}
+      - action: press                        # 演示 press 动作提交搜索
+        locator: "#chat-textarea"
+        key: Enter
+      - action: wait_for
+        locator: "#content_left"
+      - action: assert_contains
+        locator: url
+        expect: wd=${keyword}
+      - action: screenshot
+        value: 搜索结果_${keyword}

@@ -1,0 +1,28 @@
+# 登录模块：冒烟主流程（P0）
+suite: 登录模块
+module: 登录
+cases:
+  - id: login_001
+    title: 标准用户登录成功进入商品页
+    level: smoke
+    priority: P0
+    data:
+      user: ${business.users.demo_shop.standard_user}
+    steps:
+      - action: goto
+        value: /index.html
+      - action: fill
+        locator: "#username"
+        value: ${user.username}
+      - action: fill
+        locator: "#password"
+        value: ${user.password}
+      - action: click
+        locator: "#login-btn"
+      - action: assert_url
+        expect: products.html
+      - action: assert_text
+        locator: ".title"
+        expect: 商品列表
+      - action: screenshot
+        value: 登录成功

@@ -1,0 +1,12 @@
+# 业务数据：演示商城账号（与用例脚本分离，修改数据无需改用例）
+demo_shop:
+  standard_user:
+    username: standard
+    password: "123456"
+  locked_user:
+    username: locked
+    password: "123456"
+
+  # 业务预期文案（断言值也属于业务数据）
+  msg_invalid: 用户名或密码错误
+  msg_locked: 账号已被锁定，请联系管理员

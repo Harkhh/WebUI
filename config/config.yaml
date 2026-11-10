@@ -1,0 +1,36 @@
+# ============================================
+# 全局配置文件（与运行环境无关的公共配置）
+# ============================================
+
+# 运行环境: 对应 config/env/ 下的文件名（不含后缀），可被 run.py --env 参数覆盖
+env: test
+
+browser:
+  type: chromium          # chromium / firefox / webkit
+  headless: true          # 是否无头模式
+  slow_mo: 0              # 每步操作延迟（毫秒），调试时可放慢
+  timeout: 10             # 元素操作默认超时（秒）
+  # 自定义 UA（为空使用浏览器默认）；外网站点建议配置常规 UA 降低反爬误判
+  user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+  stealth: true           # 隐藏 navigator.webdriver 等自动化特征（测真实网站时建议开启）
+  viewport:
+    width: 1280
+    height: 720
+
+paths:
+  cases_dir: data/cases            # YAML 用例目录
+  excel_cases_dir: data/cases/excel  # Excel 用例目录
+  business_dir: data/business      # 业务数据目录
+  reports_dir: reports             # 测试报告目录（与日志分离）
+  logs_dir: logs                   # 过程日志目录（与报告分离）
+
+# 本地演示站点（base_url 指向 127.0.0.1 时自动拉起）
+demo_server:
+  port: 8930
+  doc_root: demo_site
+
+# 报告定制
+report:
+  title: UI自动化测试报告     # 报告标题（浏览器标签页 <title>）
+  build_name: ""              # 概览页构建名（executor.json buildName），留空自动用 run_id
+  custom_css: ""              # 注入报告 <head> 的自定义 CSS，可覆盖总览页样式，留空不注入

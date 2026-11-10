@@ -1,0 +1,45 @@
+# 购物车模块：冒烟主流程，演示 save_text 运行期变量
+suite: 购物车模块
+module: 购物车
+cases:
+  - id: cart_001
+    title: 登录后加入购物车数量加一
+    level: smoke
+    priority: P1
+    data:
+      user: ${business.users.demo_shop.standard_user}
+      first: ${business.products.demo_shop.first_product.name}
+      count_after_add: ${business.products.demo_shop.cart_one}
+    steps:
+      - action: goto
+        value: /index.html
+      - action: fill
+        locator: "#username"
+        value: ${user.username}
+      - action: fill
+        locator: "#password"
+        value: ${user.password}
+      - action: click
+        locator: "#login-btn"
+      - action: assert_contains
+        locator: url
+        expect: products.html
+      - action: assert_contains
+        locator: ".title"
+        expect: 商品列表
+      - action: assert_count
+        locator: ".product-item"
+        expect: ${business.products.demo_shop.product_count}
+      - action: assert_contains
+        locator: ".product-item:first-child .name"
+        expect: ${first}
+      - action: click
+        locator: ".product-item:first-child .add-btn"
+      - action: save_text
+        locator: "#cart-count"
+        value: cart_num
+      - action: assert_text
+        locator: "#cart-count"
+        expect: ${count_after_add}
+      - action: screenshot
+        value: 购物车加购成功
